@@ -1,0 +1,29 @@
+use vk;
+
+-- 1 
+
+select
+	-- РµСЃР»Рё СЏ РїСЂР°РІРёР»СЊРЅРѕ РїРѕРЅСЏР», С‚Рѕ С‚РѕС‚ РєС‚Рѕ Р±РѕР»СЊС€Рµ РІСЃРµРіРѕ РѕР±С‰Р°РµС‚СЃСЏ СЃ РЅР°С€РёРј РїРѕР»СЊР·Р°РІР°С‚РµР»РµРј, СЌС‚Рѕ С‚РѕС‚, РєС‚Рѕ Р±РѕР»СЊС€Рµ РІСЃРµС… РѕС‚РїСЂР°РІР»СЏР» СЃРѕРѕР±С‰РµРЅРёР№.
+	-- РѕС‚СЃРѕСЂС‚РёСЂСѓРµРј РІ РїРѕСЂСЏРґРєРµ СѓР±С‹РІР°РЅРёСЏ РїРѕ РєРѕР»РёС‡РµСЃС‚РІСѓ СЃРѕРѕР±С‰РµРЅРёР№ РЅР°С€РµРјСѓ РїРѕР»СЊР·РѕРІР°С‚РµР»СЋ
+	from_user_id
+from messages 
+where to_user_id = 1 and from_user_id = 
+-- РґРµР»Р°РµРј РІС‹Р±РѕСЂРєСѓ РїРѕ РѕС‚РїСЂР°РІРёС‚РµР»СЏРј СЃРѕРѕР±С‰РµРЅРёР№. РћС‚СЃРµРµРІР°РµРј "РЅРµ РґСЂСѓР·РµР№" РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ id=1
+(select initiator_user_id as friend 
+from friend_requests where target_user_id = 1 and status = 'approved' 
+union select target_user_id from friend_requests where initiator_user_id = 1  and status = 'approved' limit 1)
+group by from_user_id 
+order by count(*) desc;
+
+-- 2
+
+select Count(*) from likes where media_id in (select id from media where 
+user_id  in (select user_id from profiles where TIMESTAMPDIFF(year, birthday, now()) < 10));
+
+-- 3
+
+select 
+(select gender from profiles where user_id=likes.user_id) as `gender`, 
+count(*) 
+from likes 
+group by gender;
